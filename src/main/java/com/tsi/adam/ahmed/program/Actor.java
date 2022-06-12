@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.annotation.Id;
-
+import org.springframework.data.relational.core.mapping.Table;
 @EntityScan
 @Table(name ="actor")
 
@@ -21,7 +21,7 @@ public class Actor {
     private String first_name;
     private String last_name;
 
-    public Actor(String first_name, String last_name){
+    public Actor(String first_name, String last_name) {
         this.first_name = first_name;
         this.last_name = last_name;
     }
