@@ -3,50 +3,80 @@ package com.tsi.adam.ahmed.program;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 
 @SpringBootApplication
 @RestController
-@RequestMapping("/home")
+@RequestMapping("/Home")
+@CrossOrigin
 public class MyFirstMicroServiceApplication {
 
 	@Autowired
 	private ActorRepository actorRepository;
+	@Autowired
 	private AddressRepository addressRepository;
+	@Autowired
 	private CategoryRepository categoryRepository;
+	@Autowired
 	private CityRepository cityRepository;
+	@Autowired
 	private CountryRepository countryRepository;
+	@Autowired
 	private CustomerRepository customerRepository;
+	@Autowired
 	private FilmRepository filmRepository;
+
+	private String saved = "Saved";
 
 	public MyFirstMicroServiceApplication(ActorRepository actorRepository, AddressRepository addressRepository,
 										  CategoryRepository categoryRepository, CityRepository cityRepository,
 										  CountryRepository countryRepository, CustomerRepository customerRepository,
 										  FilmRepository filmRepository) {
+
+		this.actorRepository = actorRepository;
+		this.addressRepository = addressRepository;
+		this.categoryRepository = categoryRepository;
+		this.cityRepository = cityRepository;
+		this.countryRepository = countryRepository;
+		this.customerRepository = customerRepository;
+		this.filmRepository = filmRepository;
 	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(MyFirstMicroServiceApplication.class, args);
 	}
 
-	public MyFirstMicroServiceApplication(ActorRepository actorRepository){
-		this.actorRepository = actorRepository;
-	}
-	public MyFirstMicroServiceApplication(AddressRepository addressRepository){this.addressRepository = addressRepository;}
-	public MyFirstMicroServiceApplication(CategoryRepository categoryRepository){this.categoryRepository = categoryRepository;}
-	public MyFirstMicroServiceApplication(CityRepository cityRepository){this.cityRepository = cityRepository;}
-	public MyFirstMicroServiceApplication(CountryRepository countryRepository){this.countryRepository = countryRepository;}
-	public MyFirstMicroServiceApplication(CustomerRepository customerRepository){this.customerRepository = customerRepository;}
-	public MyFirstMicroServiceApplication(FilmRepository filmRepository){this.filmRepository = filmRepository;}
-
 	@GetMapping("/All_Actors")
 	public @ResponseBody
-	Iterable<Actor> getAllActors(){
+	Iterable<Actor>getAllActors(){
 		return actorRepository.findAll();
+	}
+
+	@PostMapping("/Add_Actor")
+	public @ResponseBody
+	String addActor(@RequestParam String first_name, String last_name){
+		Actor addActor = new Actor(first_name, last_name);
+		actorRepository.save(addActor);
+		return saved;
+	}
+
+	@PutMapping("/Put_A_Actor")//update an actor within the actor table with the given id
+	public ResponseEntity<Actor> updateActor(@RequestParam Integer id, @RequestParam String first_name, @RequestParam String last_name){
+		Actor updateActor = actorRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Actor does not exit with id: " + id));
+		updateActor.setFirst_name(first_name);
+		updateActor.setLast_name(last_name);
+		actorRepository.save(updateActor);
+		return ResponseEntity.ok(updateActor);
+	}
+
+	@DeleteMapping("/Delete_A_Actor")//delete an actor from the actor table with the given id
+	public ResponseEntity<Actor> deleteActor(@RequestParam Integer id){
+		Actor deleteActor = actorRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Actor does not exist with id: " + id));
+		actorRepository.deleteById(id);
+		return ResponseEntity.ok(deleteActor);
 	}
 
 	@GetMapping("/All_Address")

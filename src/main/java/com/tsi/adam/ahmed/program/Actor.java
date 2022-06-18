@@ -1,16 +1,13 @@
 package com.tsi.adam.ahmed.program;
 
+import net.minidev.json.annotate.JsonIgnore;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
-@EntityScan
+@Entity
 @Table(name ="actor")
-
 public class Actor {
 
     @Id
@@ -21,16 +18,16 @@ public class Actor {
     private String first_name;
     private String last_name;
 
-    public Actor(String first_name, String last_name) {
-        this.first_name = first_name;
-        this.last_name = last_name;
+    public Actor(String firstName, String lastName) {
+        this.first_name = firstName;
+        this.last_name = lastName;
     }
 
     //Empty Constructor
     public Actor(){
     }
 
-    public int getActor_id(){
+    public int getActor_id() {
         return actor_id;
     }
 

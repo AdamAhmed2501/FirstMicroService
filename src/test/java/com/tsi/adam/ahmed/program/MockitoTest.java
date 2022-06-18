@@ -1,22 +1,19 @@
 package com.tsi.adam.ahmed.program;
 
+import com.tsi.adam.ahmed.program.MyFirstMicroServiceApplication;
 import org.junit.jupiter.api.Assertions;
-import org.mockito.ArgumentCaptor;
-import static org.mockito.Mockito.verify;
-import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
+import org.mockito.ArgumentCaptor;
+import static org.mockito.Mockito.*;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import com.tsi.adam.ahmed.program.Actor;
-import com.tsi.adam.ahmed.program.ActorRepository;
-import java.util.List;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class MockitoTest {
 
+    @Mock
     private MyFirstMicroServiceApplication myFirstMicroServiceApplication;
     @Mock
     private ActorRepository actorRepository;
@@ -35,7 +32,6 @@ public class MockitoTest {
 
     @BeforeEach
     void setUp(){
-        // actorRepository = mock(ActorRepository.class);
         myFirstMicroServiceApplication = new MyFirstMicroServiceApplication(actorRepository,addressRepository,
                 categoryRepository,cityRepository,countryRepository,customerRepository,filmRepository);
 

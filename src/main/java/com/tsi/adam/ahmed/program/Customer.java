@@ -6,10 +6,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.data.annotation.Id;
-
-@EntityScan
+@Entity
 @Table(name ="customer")
 public class Customer {
 

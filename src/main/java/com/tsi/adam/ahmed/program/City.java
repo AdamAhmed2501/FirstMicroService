@@ -5,12 +5,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.data.annotation.Id;
-
-@EntityScan
+@Entity
 @Table(name ="city")
-
 public class City {
 
     @Id
