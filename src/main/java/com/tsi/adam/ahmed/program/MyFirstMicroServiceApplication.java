@@ -49,40 +49,74 @@ public class MyFirstMicroServiceApplication {
 		SpringApplication.run(MyFirstMicroServiceApplication.class, args);
 	}
 
-	@GetMapping("/All_Actors")
+	@GetMapping("/Actor/List")
 	public @ResponseBody
 	Iterable<Actor>getAllActors(){
 		return actorRepository.findAll();
 	}
 
-	@PostMapping("/Add_Actor")
+	@GetMapping("/Actor/{id}")
+	public Actor getActor(@PathVariable int id) {
+		return actorRepository.findById(id).orElseThrow(RuntimeException::new);
+	}
+	@PostMapping("/Actor/New")
 	public @ResponseBody
 	String addActor(@RequestParam String first_name, String last_name){
 		Actor addActor = new Actor(first_name, last_name);
 		actorRepository.save(addActor);
 		return saved;
 	}
-
-	@PutMapping("/Put_A_Actor")//update an actor within the actor table with the given id
+	@PutMapping("/Actor/Edit/{id}")//update an actor within the actor table with the given id
 	public ResponseEntity<Actor> updateActor(@RequestParam Integer id, @RequestParam String first_name, @RequestParam String last_name){
-		Actor updateActor = actorRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Actor does not exit with id: " + id));
+		Actor updateActor = actorRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Actor does not exist with id: " + id));
 		updateActor.setFirst_name(first_name);
 		updateActor.setLast_name(last_name);
 		actorRepository.save(updateActor);
 		return ResponseEntity.ok(updateActor);
 	}
 
-	@DeleteMapping("/Delete_A_Actor")//delete an actor from the actor table with the given id
+	@DeleteMapping("/Actor/Delete")//delete an actor from the actor table with the given id
 	public ResponseEntity<Actor> deleteActor(@RequestParam Integer id){
 		Actor deleteActor = actorRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Actor does not exist with id: " + id));
 		actorRepository.deleteById(id);
 		return ResponseEntity.ok(deleteActor);
 	}
 
-	@GetMapping("/All_Address")
+	@GetMapping("/Address/List")
 	public @ResponseBody
 	Iterable<Address> getAllAddress(){
 		return addressRepository.findAll();
+	}
+
+	@GetMapping("/Address/{id}")
+	public Address getAddress(@PathVariable int id) {
+		return addressRepository.findById(id).orElseThrow(RuntimeException::new);
+	}
+	@PostMapping("/Address/New")
+	public @ResponseBody
+	String addAddress(@RequestParam String address, String address2, String district, String postal_code, double phone, String location){
+		Address addAddress = new Address(address, address2, district, postal_code, phone, location);
+		addressRepository.save(addAddress);
+		return saved;
+	}
+	@PutMapping("/Address/Edit/{id}")
+	public ResponseEntity<Address> updateAddress(@RequestParam Integer id, @RequestParam String address, @RequestParam String address2, @RequestParam String district, @RequestParam String postal_code, @RequestParam double phone, @RequestParam String location){
+		Address updateAddress = addressRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Address does not exist with id: " + id));
+		updateAddress.setAddress(address);
+		updateAddress.setAddress2(address2);
+		updateAddress.setDistrict(district);
+		updateAddress.setPostal_code(postal_code);
+		updateAddress.setPhone(phone);
+		updateAddress.setLocation(location);
+		addressRepository.save(updateAddress);
+		return ResponseEntity.ok(updateAddress);
+	}
+
+	@DeleteMapping("/Address/Delete")
+	public ResponseEntity<Address> deleteAddress(@RequestParam Integer id){
+		Address deleteAddress = addressRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Address does not exist with id: " + id));
+		addressRepository.deleteById(id);
+		return ResponseEntity.ok(deleteAddress);
 	}
 
 	@GetMapping("/All_Category")
