@@ -66,20 +66,22 @@ public class MyFirstMicroServiceApplication {
 		actorRepository.save(addActor);
 		return saved;
 	}
-	@PutMapping("/Actor/Edit/{id}")//update an actor within the actor table with the given id
-	public ResponseEntity<Actor> updateActor(@RequestParam Integer id, @RequestParam String first_name, @RequestParam String last_name){
-		Actor updateActor = actorRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Actor does not exist with id: " + id));
-		updateActor.setFirst_name(first_name);
-		updateActor.setLast_name(last_name);
-		actorRepository.save(updateActor);
-		return ResponseEntity.ok(updateActor);
+
+	@PutMapping("/Actor/Edit/{id}")
+	public ResponseEntity updateActor(@PathVariable int id, @RequestParam String first_name, String last_name) {
+		Actor currentActor = actorRepository.findById(id).orElseThrow(RuntimeException::new);
+		currentActor.setFirst_name(first_name);
+		currentActor.setLast_name(last_name);
+		Actor newActor = new Actor(first_name, last_name);
+		currentActor = actorRepository.save(newActor);
+
+		return ResponseEntity.ok(currentActor);
 	}
 
-	@DeleteMapping("/Actor/Delete")//delete an actor from the actor table with the given id
-	public ResponseEntity<Actor> deleteActor(@RequestParam Integer id){
-		Actor deleteActor = actorRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Actor does not exist with id: " + id));
+	@DeleteMapping("/Actor/Delete/{id}")
+	public ResponseEntity deleteActor(@PathVariable int id) {
 		actorRepository.deleteById(id);
-		return ResponseEntity.ok(deleteActor);
+		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping("/Address/List")
@@ -112,7 +114,7 @@ public class MyFirstMicroServiceApplication {
 		return ResponseEntity.ok(updateAddress);
 	}
 
-	@DeleteMapping("/Address/Delete")
+	@DeleteMapping("/Address/Delete/{id}")
 	public ResponseEntity<Address> deleteAddress(@RequestParam Integer id){
 		Address deleteAddress = addressRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Address does not exist with id: " + id));
 		addressRepository.deleteById(id);
