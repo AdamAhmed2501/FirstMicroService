@@ -109,8 +109,46 @@ public class MockitoTest {
 
     }
 
+    @Test
+    void testGetAddress(){
+        Address testAddress = new Address("firstline", "secondline", "area", "postal", 20009, "London");
+        testAddress.setAddress_id(1);
+        when(addressRepository.findById(1)).thenReturn(Optional.of(testAddress));
+        Address Actual = myFirstMicroServiceApplication.getAddress(testAddress.getAddress_id());
+        Address Expected = testAddress;
+        Assertions.assertEquals(Expected,Actual,"Could not find address with ID: ");
+    }
 
+    @Test
+    void testUpdateAddress(){
+        Address testAddress = new Address("firstline", "secondline", "area", "postal", 20009, "London");
+        testAddress.setAddress_id(1);
+        Address testUpdateAddress = new Address("updatedfirstline", "updatedsecondline", "updatedarea", "updatedpostal", 20009, "London");
+        testUpdateAddress.setAddress_id(1);
+        when(addressRepository.findById(testAddress.getAddress_id())).thenReturn(Optional.of(testUpdateAddress));
 
+        Address Actual = myFirstMicroServiceApplication.updateAddress(testUpdateAddress.getAddress_id(), testUpdateAddress.getAddress(), testUpdateAddress.getAddress2(), testUpdateAddress.getDistrict(), testUpdateAddress.getPostal_code(), testUpdateAddress.getPhone(), testUpdateAddress.getLocation()).getBody();
+
+        ArgumentCaptor<Address> addressArgumentCaptor = ArgumentCaptor.forClass(Address.class);
+        verify(addressRepository).save(addressArgumentCaptor.capture());
+        Address Expected = addressArgumentCaptor.getValue();
+
+        Assertions.assertEquals(Expected,Actual,"Address was not updated.");
+    }
+
+    @Test
+    void testDeleteAddress(){
+        Address testAddress = new Address("firstline", "secondline", "area", "postal", 20009, "London");
+        testAddress.setAddress_id(1);
+        Address testAddressDelete = new Address("firstline", "secondline", "area", "postal", 20009, "London");
+        testAddressDelete.setAddress_id(1);
+        when(addressRepository.findById(testAddressDelete.getAddress_id())).thenReturn(Optional.of(testAddressDelete));
+        doNothing().when(addressRepository).deleteById(1);
+        Address Actual = myFirstMicroServiceApplication.deleteAddress(testAddressDelete.getAddress_id()).getBody();
+        addressRepository.deleteById(testAddressDelete.getAddress_id());
+        Address Expected = testAddressDelete;
+        Assertions.assertEquals(Expected,Actual,"Address was not deleted.");
+    }
 
 //    |==========================|
 //    |   CATEGORY CRUD TESTS    |
