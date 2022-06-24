@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 
-@CucumberOptions(plugin ={"Pretty"},
+@CucumberOptions(plugin ={"pretty"},
     features = "src/test/resources/Cucumber",
         glue = "com.tsi.adam.ahmed.program")
 

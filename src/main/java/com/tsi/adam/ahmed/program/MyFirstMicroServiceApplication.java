@@ -7,30 +7,26 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 @SpringBootApplication
 @RestController
 @RequestMapping("/Home")
 @CrossOrigin(origins = "*")
 public class MyFirstMicroServiceApplication {
-
-	@Autowired
-	private ActorRepository actorRepository;
-	@Autowired
-	private AddressRepository addressRepository;
-	@Autowired
-	private CategoryRepository categoryRepository;
-	@Autowired
-	private CityRepository cityRepository;
-	@Autowired
-	private CountryRepository countryRepository;
-	@Autowired
-	private CustomerRepository customerRepository;
-	@Autowired
-	private FilmRepository filmRepository;
-
-	private String saved = "Saved";
-
+	@Autowired    																										// Handles dependency injection.
+	private ActorRepository actorRepository; 																			//Injects Actor Database.
+	@Autowired    																										// Handles dependency injection.
+	private AddressRepository addressRepository; 																		//Injects Address Database.
+	@Autowired    																										// Handles dependency injection.
+	private CategoryRepository categoryRepository; 																		//Injects Category Database.
+	@Autowired    																										// Handles dependency injection.
+	private CityRepository cityRepository; 																				//Injects City Database.
+	@Autowired    																										// Handles dependency injection.
+	private CountryRepository countryRepository; 																		//Injects Country Database.
+	@Autowired    																										// Handles dependency injection.
+	private CustomerRepository customerRepository; 																		//Injects Customer Database.
+	@Autowired    																										// Handles dependency injection.
+	private FilmRepository filmRepository; 																				//Injects Film Database.
+	private String saved = "Saved";                                                                                     // Used later for confirmation.
 	public MyFirstMicroServiceApplication(ActorRepository actorRepository, AddressRepository addressRepository,
 										  CategoryRepository categoryRepository, CityRepository cityRepository,
 										  CountryRepository countryRepository, CustomerRepository customerRepository,
@@ -49,41 +45,57 @@ public class MyFirstMicroServiceApplication {
 		SpringApplication.run(MyFirstMicroServiceApplication.class, args);
 	}
 
-	@GetMapping("/Actor/List")
-	public @ResponseBody
-	Iterable<Actor>getAllActors(){
-		return actorRepository.findAll();
+
+//    |==========================|
+//    |   	   ACTOR CRUD        |
+//    |==========================|
+	@GetMapping("/Actor/List")     																						// Command used to get a full list of actors.
+	public @ResponseBody Iterable<Actor>getAllActors(){                                                                 // No variables required for this request.
+		return actorRepository.findAll();   																			// Outputs a list of Actors.
 	}
 
-	@GetMapping("/Actor/{id}")
-	public Actor getActor(@PathVariable int id) {
-		return actorRepository.findById(id).orElseThrow(RuntimeException::new);
+	@GetMapping("/Actor/{id}")                 																			// Command used to get a single actor by given ID.
+	public Actor getActor(@PathVariable int id) {                                                                       // ID required as an input for this get request.
+		return actorRepository.findById(id).orElseThrow(RuntimeException::new);                                         // Actor output or error depending on if the ID exists.
 	}
-	@PostMapping("/Actor/New")
-	public @ResponseBody
-	String addActor(@RequestParam String first_name, String last_name){
-		Actor addActor = new Actor(first_name, last_name);
-		actorRepository.save(addActor);
-		return saved;
-	}
-
-	@PutMapping("/Actor/Edit/{id}")
-	public ResponseEntity updateActor(@PathVariable int id, @RequestParam String first_name, String last_name) {
-		Actor currentActor = actorRepository.findById(id).orElseThrow(RuntimeException::new);
-		currentActor.setFirst_name(first_name);
-		currentActor.setLast_name(last_name);
-		Actor newActor = new Actor(first_name, last_name);
-		currentActor = actorRepository.save(newActor);
-
-		return ResponseEntity.ok(currentActor);
+	@PostMapping("/Actor/New")                                                                                          // Command used to add an actor.
+	public @ResponseBody ResponseEntity<Actor> addActor(@RequestParam String first_name, String last_name){             // A first and last name are required for this request.
+		Actor addActor = new Actor(first_name, last_name);                                                              // Takes the two parameters and assigns them to a variable
+		if (addActor.getFirst_name() == null){                                                                          // Checks if a first name has been inputted
+			ResponseEntity.ok("Both a first name and last name are required");                              		// Outputs a error message
+		}
+		else if (addActor.getLast_name() == null){                                                                      // Checks if a first name has been inputted
+			ResponseEntity.ok("Both a first name and last name are required");     	                         	// Outputs an error message
+		}
+		else {
+			actorRepository.save(addActor);                                                                             // Saves details to db.
+		}   return ResponseEntity.ok(addActor);                                                                         // Outputs the details to conf.
 	}
 
-	@DeleteMapping("/Actor/Delete/{id}")
-	public ResponseEntity deleteActor(@PathVariable int id) {
-		actorRepository.deleteById(id);
-		return ResponseEntity.ok().build();
+	@PutMapping("/Actor/Edit/{id}")                                                                                     // Command used to edit an actor.
+	public @ResponseBody ResponseEntity<Actor> updateActor(@PathVariable int id, @RequestBody Actor actor){             // An ID, a first name and a last name are required.
+		Actor updatedActor = actorRepository.findById(id).orElseThrow(()                                                // Finds the current actor and assigns details to a variable,
+				-> new ResourceNotFoundException("Actor does not exist with the given ID. "));                          //              				  or throws out an error msg.
+		updatedActor.setFirst_name(actor.getFirst_name());                                                              // Changes the first name of the variable to input.
+		updatedActor.setLast_name(actor.getLast_name());                                                                // Changes the last name of the variable to input.
+		actorRepository.save(updatedActor);                                                                             // Outputs the updated information to confirm completion.
+		return ResponseEntity.ok(updatedActor);
 	}
 
+	@DeleteMapping("/Actor/Delete/{id}")                                                                                // Command used to delete a single actor by given ID.
+	public ResponseEntity<Actor> deleteActor(@RequestBody Actor actor){                                                 // ID required as an input for this get request.
+		Actor deleteActor = actorRepository.findById(actor.getActor_id()).orElseThrow(()                                // Actor assign or error depending on if the ID exists.
+				-> new ResourceNotFoundException("Actor does not exist with given ID"));
+		actorRepository.deleteById(deleteActor.getActor_id());                                                          // Delete actor profile.
+		return ResponseEntity.ok(deleteActor);                                                                          // Output old profile as a conf.
+	}
+
+
+
+
+//    |==========================|
+//    |   	  ADDRESS CRUD       |
+//    |==========================|
 	@GetMapping("/Address/List")
 	public @ResponseBody
 	Iterable<Address> getAllAddress(){
@@ -94,6 +106,7 @@ public class MyFirstMicroServiceApplication {
 	public Address getAddress(@PathVariable int id) {
 		return addressRepository.findById(id).orElseThrow(RuntimeException::new);
 	}
+
 	@PostMapping("/Address/New")
 	public @ResponseBody
 	String addAddress(@RequestParam String address, String address2, String district, String postal_code, double phone, String location){
@@ -101,6 +114,7 @@ public class MyFirstMicroServiceApplication {
 		addressRepository.save(addAddress);
 		return saved;
 	}
+
 	@PutMapping("/Address/Edit/{id}")
 	public ResponseEntity<Address> updateAddress(@RequestParam Integer id, @RequestParam String address, @RequestParam String address2, @RequestParam String district, @RequestParam String postal_code, @RequestParam double phone, @RequestParam String location){
 		Address updateAddress = addressRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Address does not exist with id: " + id));
@@ -121,18 +135,36 @@ public class MyFirstMicroServiceApplication {
 		return ResponseEntity.ok(deleteAddress);
 	}
 
+
+
+
+//    |==========================|
+//    |   	CATEGORY CRUD        |
+//    |==========================|
 	@GetMapping("/All_Category")
 	public @ResponseBody
 	Iterable<Category> getAllCategory(){
 		return categoryRepository.findAll();
 	}
 
+
+
+
+//    |==========================|
+//    |   	   CITY CRUD         |
+//    |==========================|
 	@GetMapping("/All_City")
 	public @ResponseBody
 	Iterable<City> getAllCity(){
 		return cityRepository.findAll();
 	}
 
+
+
+
+//    |==========================|
+//    |   	  COUNTRY CRUD       |
+//    |==========================|
 	@GetMapping("/All_Country")
 	public @ResponseBody
 	Iterable<Country> getAllCountry(){

@@ -10,11 +10,11 @@ public class ActorTest {
 
     @Test
     public void testActor(){
-        Assertions.assertEquals(0, testActor.getActor_id(), "Incorrect ID");
+        Assertions.assertEquals(0, testActor.getActor_id(), "Incorrect ID");                            //Sunny Day path
         Assertions.assertEquals("First_name", testActor.getFirst_name(), "Incorrect first name");
         Assertions.assertEquals("Last_name", testActor.getLast_name(), "Incorrect last name");
 
-        testActor2.setFirst_name("testFname");
+        testActor2.setFirst_name("testFname");                                                                          //Rainy Day Path
         Assertions.assertEquals("testFname", testActor2.getFirst_name(), "Incorrect first name");
         testActor2.setLast_name("testLname");
         Assertions.assertEquals("testLname", testActor2.getLast_name(), "Incorrect last name");
