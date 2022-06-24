@@ -7,6 +7,9 @@ import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Duration;
+import java.time.Year;
+
 @SpringBootApplication
 @RestController
 @RequestMapping("/Home")
@@ -154,7 +157,7 @@ public class MyFirstMicroServiceApplication {
 
 	@PostMapping("/Category/New")
 	public @ResponseBody
-	ResponseEntity<Category>   addCategory(@RequestParam int id, String category){
+	ResponseEntity<Category> addCategory(@RequestParam int id, String category){
 		Category addCategory = new Category(category);
 		categoryRepository.save(addCategory);
 		return ResponseEntity.ok(addCategory);
@@ -186,6 +189,35 @@ public class MyFirstMicroServiceApplication {
 		return cityRepository.findAll();
 	}
 
+	@GetMapping("/City/{id}")
+	public City getCity(@PathVariable int id) {
+		return cityRepository.findById(id).orElseThrow(RuntimeException::new);
+	}
+
+	@PostMapping("/City/New")
+	public @ResponseBody
+	ResponseEntity<City>   addCity(@RequestParam int id, String city, int country_id){
+		City addCity = new City(city);
+		cityRepository.save(addCity);
+		return ResponseEntity.ok(addCity);
+	}
+
+	@PutMapping("/City/Edit/{id}")
+	public ResponseEntity<City> updateCity(@RequestParam Integer id, @RequestParam String city){
+		City updateCity = cityRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("City does not exist with id: " + id));
+		updateCity.setCity(city);
+		cityRepository.save(updateCity);
+		return ResponseEntity.ok(updateCity);
+	}
+
+	@DeleteMapping("/City/Delete/{id}")
+	public ResponseEntity<City> deleteCity(@RequestParam Integer id){
+		City deleteCity = cityRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("City does not exist with id: " + id));
+		cityRepository.deleteById(id);
+		return ResponseEntity.ok(deleteCity);
+	}
+
+
 
 
 
@@ -198,16 +230,127 @@ public class MyFirstMicroServiceApplication {
 		return countryRepository.findAll();
 	}
 
+	@GetMapping("/Country/{id}")
+	public Country getCountry(@PathVariable int id) {
+		return countryRepository.findById(id).orElseThrow(RuntimeException::new);
+	}
+
+	@PostMapping("/Country/New")
+	public @ResponseBody
+	ResponseEntity<Country> addCountry(@RequestParam int id, String country){
+		Country addCountry = new Country(country);
+		countryRepository.save(addCountry);
+		return ResponseEntity.ok(addCountry);
+	}
+
+	@PutMapping("/Country/Edit/{id}")
+	public ResponseEntity<Country> updateCountry(@RequestParam Integer id, @RequestParam String country){
+		Country updateCountry = countryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Country does not exist with id: " + id));
+		updateCountry.setCountry(country);
+		countryRepository.save(updateCountry);
+		return ResponseEntity.ok(updateCountry);
+	}
+
+	@DeleteMapping("/Country/Delete/{id}")
+	public ResponseEntity<Country> deleteCountry(@RequestParam Integer id){
+		Country deleteCountry = countryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Country does not exist with id: " + id));
+		countryRepository.deleteById(id);
+		return ResponseEntity.ok(deleteCountry);
+	}
+
+
+
+//    |==========================|
+//    |      CUSTOMER CRUD       |
+//    |==========================|
 	@GetMapping("/All_Customer")
 	public @ResponseBody
 	Iterable<Customer> getAllCustomer(){
 		return customerRepository.findAll();
 	}
 
+	@GetMapping("/Customer/{id}")
+	public Customer getCustomer(@PathVariable int id) {
+		return customerRepository.findById(id).orElseThrow(RuntimeException::new);
+	}
+
+	@PostMapping("/Customer/New")
+	public @ResponseBody
+	ResponseEntity<Customer> addCustomer(@RequestParam String first_name, String last_name, String email, Boolean active, java.time.LocalDate create_date){
+		Customer addCustomer = new Customer(first_name, last_name, email, active, create_date);
+		customerRepository.save(addCustomer);
+		return ResponseEntity.ok(addCustomer);
+	}
+
+	@PutMapping("/Customer/Edit/{id}")
+	public ResponseEntity<Customer> updateCustomer(@RequestParam int id, @RequestParam String first_name, @RequestParam String last_name, @RequestParam String email, @RequestParam Boolean active, @RequestParam java.time.LocalDate create_date){
+		Customer updateCustomer = customerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Customer does not exist with id: " + id));
+		updateCustomer.setFirst_name(first_name);
+		updateCustomer.setLast_name(last_name);
+		updateCustomer.setEmail(email);
+		updateCustomer.setActive(active);
+		updateCustomer.setCreate_date(create_date);
+		customerRepository.save(updateCustomer);
+		return ResponseEntity.ok(updateCustomer);
+	}
+
+	@DeleteMapping("/Customer/Delete/{id}")
+	public ResponseEntity<Customer> deleteCustomer(@RequestParam Integer id){
+		Customer deleteCustomer = customerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Customer does not exist with id: " + id));
+		customerRepository.deleteById(id);
+		return ResponseEntity.ok(deleteCustomer);
+	}
+
+
+
+
+//    |==========================|
+//    |   	    FILM CRUD        |
+//    |==========================|
+
 	@GetMapping("/All_Film")
 	public @ResponseBody
 	Iterable<Film> getAllFilm(){
 		return filmRepository.findAll();
 	}
+
+
+	@GetMapping("/Film/{id}")
+	public Film getFilm(@PathVariable int id) {
+		return filmRepository.findById(id).orElseThrow(RuntimeException::new);
+	}
+
+	@PostMapping("/Film/New")
+	public @ResponseBody
+	ResponseEntity<Film> addFilm(@RequestParam String title, String description, java.time.Year release_year, java.time.Duration rental_duration, double rental_rate, java.time.Duration length, double replacement_cost, int rating, String special_features){
+		Film addFilm = new Film(title, description, Year.of(2020), Duration.ofDays(1), rental_rate, Duration.ofHours(1), replacement_cost, rating, special_features);
+		filmRepository.save(addFilm);
+		return ResponseEntity.ok(addFilm);
+	}
+
+	@PutMapping("/Film/Edit/{id}")
+	public ResponseEntity<Film> updateFilm(@RequestParam int film_id, String title, String description, java.time.Year release_year, java.time.Duration rental_duration, double rental_rate, java.time.Duration length, double replacement_cost, int rating, String special_features){
+		Film updateFilm = filmRepository.findById(film_id).orElseThrow(() -> new ResourceNotFoundException("Film does not exist with id: " + film_id));
+		updateFilm.setFilm_id(film_id);
+		updateFilm.setTitle(title);
+		updateFilm.setDescription(description);
+		updateFilm.setRelease_year(release_year);
+		updateFilm.setRental_duration(rental_duration);
+		updateFilm.setRental_rate(rental_rate);
+		updateFilm.setLength(length);
+		updateFilm.setReplacement_cost(replacement_cost);
+		updateFilm.setRating(rating);
+		updateFilm.setSpecial_features(special_features);
+		filmRepository.save(updateFilm);
+		return ResponseEntity.ok(updateFilm);
+	}
+
+	@DeleteMapping("/Film/Delete/{id}")
+	public ResponseEntity<Film> deleteFilm(@RequestParam Integer id){
+		Film deleteFilm = filmRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Film does not exist with id: " + id));
+		filmRepository.deleteById(id);
+		return ResponseEntity.ok(deleteFilm);
+	}
+
 
 }

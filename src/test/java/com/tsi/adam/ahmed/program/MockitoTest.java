@@ -8,6 +8,11 @@ import org.mockito.ArgumentCaptor;
 import static org.mockito.Mockito.*;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.time.LocalDate;
+import java.time.Duration;
+import java.time.Year;
 import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -181,16 +186,17 @@ public class MockitoTest {
         Category Expected = testCategory;
         Assertions.assertEquals(Expected,Actual,"Could not find category with ID: ");
     }
-//    @Test
-//    public void testAddCategory(){
-//
-//        Category savedCategory = new Category("testcategory");
-//        Category Expected = myFirstMicroServiceApplication.addCategory(savedCategory.get_name()).getBody();
-//        ArgumentCaptor<Category> categoryArgumentCaptor = ArgumentCaptor.forClass(Category.class);
-//        verify(categoryRepository).save(categoryArgumentCaptor.capture());
-//        Category Actual = categoryArgumentCaptor.getValue();
-//        Assertions.assertEquals(Expected,Actual,"Category is not saved into the database");
-//    }
+
+    @Test
+    public void testAddCategory(){
+
+        Category savedCategory = new Category("testcategory");
+        Category Expected = myFirstMicroServiceApplication.addCategory(savedCategory.getCategory_id(), savedCategory.get_name()).getBody();
+        ArgumentCaptor<Category> categoryArgumentCaptor = ArgumentCaptor.forClass(Category.class);
+        verify(categoryRepository).save(categoryArgumentCaptor.capture());
+        Category Actual = categoryArgumentCaptor.getValue();
+        Assertions.assertEquals(Expected,Actual,"Category is not saved into the database");
+    }
 
     @Test
     void testUpdateCategory(){
@@ -237,6 +243,56 @@ public class MockitoTest {
     }
 
 
+    @Test
+    void testGetCity(){
+        City testCity = new City("testcity");
+        testCity.setCity_id(1);
+        when(cityRepository.findById(1)).thenReturn(Optional.of(testCity));
+        City Actual = myFirstMicroServiceApplication.getCity(testCity.getCity_id());
+        City Expected = testCity;
+        Assertions.assertEquals(Expected,Actual,"Could not find city with ID: ");
+    }
+
+    @Test
+    public void testAddCity(){
+
+        City savedCity = new City("testcity");
+        City Expected = myFirstMicroServiceApplication.addCity(savedCity.getCity_id(), savedCity.getCity(), savedCity.getCountry_id()).getBody();
+        ArgumentCaptor<City> cityArgumentCaptor = ArgumentCaptor.forClass(City.class);
+        verify(cityRepository).save(cityArgumentCaptor.capture());
+        City Actual = cityArgumentCaptor.getValue();
+        Assertions.assertEquals(Expected,Actual,"City is not saved into the database");
+    }
+
+    @Test
+    void testUpdateCity(){
+        City testCity = new City("testcity");
+        testCity.setCity_id(1);
+        City testUpdateCity = new City("testcityUpdated");
+        testUpdateCity.setCity_id(1);
+        when(cityRepository.findById(testCity.getCity_id())).thenReturn(Optional.of(testUpdateCity));
+
+        City Actual = myFirstMicroServiceApplication.updateCity(testUpdateCity.getCity_id(), testUpdateCity.getCity()).getBody();
+
+        ArgumentCaptor<City> cityArgumentCaptor = ArgumentCaptor.forClass(City.class);
+        verify(cityRepository).save(cityArgumentCaptor.capture());
+        City Expected = cityArgumentCaptor.getValue();
+
+        Assertions.assertEquals(Expected,Actual,"City was not updated.");
+    }
+    @Test
+    void testDeleteCity(){
+        City testCity = new City("testcity");
+        testCity.setCity_id(1);
+        City testCityDelete = new City("testcitydeleted");
+        testCityDelete.setCity_id(1);
+        when(cityRepository.findById(testCityDelete.getCity_id())).thenReturn(Optional.of(testCityDelete));
+        doNothing().when(cityRepository).deleteById(1);
+        City Actual = myFirstMicroServiceApplication.deleteCity(testCityDelete.getCity_id()).getBody();
+        cityRepository.deleteById(testCityDelete.getCity_id());
+        City Expected = testCityDelete;
+        Assertions.assertEquals(Expected,Actual,"City was not deleted.");
+    }
 
 
 //    |==========================|
@@ -244,12 +300,62 @@ public class MockitoTest {
 //    |==========================|
     @Test
     public void getAllCountry(){
-        myFirstMicroServiceApplication.getAllCountry();
-        verify(countryRepository).findAll();
+        myFirstMicroServiceApplication.getAllCustomer();
+        verify(customerRepository).findAll();
 
     }
 
 
+    @Test
+    void testGetCountry(){
+        Country testCountry = new Country("testcountry");
+        testCountry.setCountry_id(1);
+        when(countryRepository.findById(1)).thenReturn(Optional.of(testCountry));
+        Country Actual = myFirstMicroServiceApplication.getCountry(testCountry.getCountry_id());
+        Country Expected = testCountry;
+        Assertions.assertEquals(Expected,Actual,"Could not find country with ID: ");
+    }
+
+    @Test
+    public void testAddCountry(){
+
+        Country savedCountry = new Country("testcountry");
+        Country Expected = myFirstMicroServiceApplication.addCountry(savedCountry.getCountry_id(), savedCountry.getCountry()).getBody();
+        ArgumentCaptor<Country> countryArgumentCaptor = ArgumentCaptor.forClass(Country.class);
+        verify(countryRepository).save(countryArgumentCaptor.capture());
+        Country Actual = countryArgumentCaptor.getValue();
+        Assertions.assertEquals(Expected,Actual,"Country is not saved into the database");
+    }
+
+    @Test
+    void testUpdateCountry(){
+        Country testCountry = new Country("testcountry");
+        testCountry.setCountry_id(1);
+        Country testUpdateCountry = new Country("testcountryUpdated");
+        testUpdateCountry.setCountry_id(1);
+        when(countryRepository.findById(testCountry.getCountry_id())).thenReturn(Optional.of(testUpdateCountry));
+
+        Country Actual = myFirstMicroServiceApplication.updateCountry(testUpdateCountry.getCountry_id(), testUpdateCountry.getCountry()).getBody();
+
+        ArgumentCaptor<Country> countryArgumentCaptor = ArgumentCaptor.forClass(Country.class);
+        verify(countryRepository).save(countryArgumentCaptor.capture());
+        Country Expected = countryArgumentCaptor.getValue();
+
+        Assertions.assertEquals(Expected,Actual,"Country was not updated.");
+    }
+    @Test
+    void testDeleteCountry(){
+        Country testCountry = new Country("testcountry");
+        testCountry.setCountry_id(1);
+        Country testCountryDelete = new Country("testcountrydeleted");
+        testCountryDelete.setCountry_id(1);
+        when(countryRepository.findById(testCountryDelete.getCountry_id())).thenReturn(Optional.of(testCountryDelete));
+        doNothing().when(countryRepository).deleteById(1);
+        Country Actual = myFirstMicroServiceApplication.deleteCountry(testCountryDelete.getCountry_id()).getBody();
+        countryRepository.deleteById(testCountryDelete.getCountry_id());
+        Country Expected = testCountryDelete;
+        Assertions.assertEquals(Expected,Actual,"Country was not deleted.");
+    }
 
 
 //    |==========================|
@@ -262,6 +368,58 @@ public class MockitoTest {
 
     }
 
+    @Test
+    void testGetCustomer(){
+        Customer testCustomer = new Customer("testfirstname", "testlastname", "email", true, LocalDate.of(2022,06,12));
+        testCustomer.setCustomer_id(1);
+        when(customerRepository.findById(1)).thenReturn(Optional.of(testCustomer));
+        Customer Actual = myFirstMicroServiceApplication.getCustomer(testCustomer.getCustomer_id());
+        Customer Expected = testCustomer;
+        Assertions.assertEquals(Expected,Actual,"Could not find customer with ID: ");
+    }
+
+    @Test
+    public void testAddCustomer(){
+
+        Customer savedCustomer = new Customer("testfirstname", "testlastname", "email", true, LocalDate.of(2022,06,12));
+        Customer Expected = myFirstMicroServiceApplication.addCustomer(savedCustomer.getFirst_name(), savedCustomer.getLast_name(), savedCustomer.getEmail(), savedCustomer.isActive(), savedCustomer.getCreate_date()).getBody();
+        ArgumentCaptor<Customer> customerArgumentCaptor = ArgumentCaptor.forClass(Customer.class);
+        verify(customerRepository).save(customerArgumentCaptor.capture());
+        Customer Actual = customerArgumentCaptor.getValue();
+        Assertions.assertEquals(Expected,Actual,"Customer is not saved into the database");
+    }
+
+    @Test
+    void testUpdateCustomer(){
+        Customer testCustomer = new Customer("testfirstname", "testlastname", "email", true, LocalDate.of(2022,06,12));
+        testCustomer.setCustomer_id(1);
+        Customer testUpdateCustomer = new Customer("testfirstnameupdated", "testlastnameupdated", "emailupdated", true, LocalDate.of(2022,06,12));
+        testUpdateCustomer.setCustomer_id(1);
+        when(customerRepository.findById(testCustomer.getCustomer_id())).thenReturn(Optional.of(testUpdateCustomer));
+
+        Customer Actual = myFirstMicroServiceApplication.updateCustomer(testUpdateCustomer.getCustomer_id(), testUpdateCustomer.getFirst_name(), testUpdateCustomer.getLast_name(), testUpdateCustomer.getEmail(), testUpdateCustomer.isActive(), testUpdateCustomer.getCreate_date()).getBody();
+
+        ArgumentCaptor<Customer> customerArgumentCaptor = ArgumentCaptor.forClass(Customer.class);
+        verify(customerRepository).save(customerArgumentCaptor.capture());
+        Customer Expected = customerArgumentCaptor.getValue();
+
+        Assertions.assertEquals(Expected,Actual,"Customer was not updated.");
+    }
+
+
+    @Test
+    void testDeleteCustomer(){
+        Customer testCustomer = new Customer("testfirstname", "testlastname", "email", true, LocalDate.of(2022,06,12));
+        testCustomer.setCustomer_id(1);
+        Customer testCustomerDelete = new Customer("testfirstnamedeleted", "testlastnamedeleted", "emaildeleted", true, LocalDate.of(2022,06,12));
+        testCustomerDelete.setCustomer_id(1);
+        when(customerRepository.findById(testCustomerDelete.getCustomer_id())).thenReturn(Optional.of(testCustomerDelete));
+        doNothing().when(customerRepository).deleteById(1);
+        Customer Actual = myFirstMicroServiceApplication.deleteCustomer(testCustomerDelete.getCustomer_id()).getBody();
+        customerRepository.deleteById(testCustomerDelete.getCustomer_id());
+        Customer Expected = testCustomerDelete;
+        Assertions.assertEquals(Expected,Actual,"Customer was not deleted.");
+    }
 
 
 
@@ -275,7 +433,58 @@ public class MockitoTest {
 
     }
 
+    @Test
+    void testGetFilm(){
+        Film testFilm = new Film("testtitle", "testdescription", Year.of(2020), Duration.ofDays(1), 2,Duration.ofHours(0) , 2, 2, "Special_features");
+        testFilm.setFilm_id(1);
+        when(filmRepository.findById(1)).thenReturn(Optional.of(testFilm));
+        Film Actual = myFirstMicroServiceApplication.getFilm(testFilm.getFilm_id());
+        Film Expected = testFilm;
+        Assertions.assertEquals(Expected,Actual,"Could not find film with ID: ");
+    }
 
+    @Test
+    public void testAddFilm(){
+
+        Film savedFilm = new Film("testtitle", "testdescription", Year.of(2020), Duration.ofDays(1), 2,Duration.ofHours(0) , 2, 2, "Special_features");
+        Film Expected = myFirstMicroServiceApplication.addFilm(savedFilm.getTitle(), savedFilm.getDescription(), savedFilm.getRelease_year(), savedFilm.getRental_duration(), savedFilm.getRental_rate(), savedFilm.getLength(), savedFilm.getReplacement_cost(), savedFilm.getRating(), savedFilm.getSpecial_features()).getBody();
+        ArgumentCaptor<Film> filmArgumentCaptor = ArgumentCaptor.forClass(Film.class);
+        verify(filmRepository).save(filmArgumentCaptor.capture());
+        Film Actual = filmArgumentCaptor.getValue();
+        Assertions.assertEquals(Expected,Actual,"Film is not saved into the database");
+    }
+
+    @Test
+    void testUpdateFilm(){
+        Film testFilm = new Film("testtitle", "testdescription", Year.of(2020), Duration.ofDays(1), 2,Duration.ofHours(0) , 2, 2, "Special_features");
+        testFilm.setFilm_id(1);
+        Film testUpdateFilm = new Film("testUpdatetitle", "testUpdatedescription", Year.of(2020), Duration.ofDays(1), 2,Duration.ofHours(0) , 2, 2, "Special_Update_features");
+        testUpdateFilm.setFilm_id(1);
+        when(filmRepository.findById(testFilm.getFilm_id())).thenReturn(Optional.of(testUpdateFilm));
+
+        Film Actual = myFirstMicroServiceApplication.updateFilm(testUpdateFilm.getFilm_id(), testUpdateFilm.getTitle(), testUpdateFilm.getDescription(), testUpdateFilm.getRelease_year(), testUpdateFilm.getRental_duration(), testUpdateFilm.getRental_rate(), testUpdateFilm.getLength(), testUpdateFilm.getReplacement_cost(), testUpdateFilm.getRating(), testUpdateFilm.getSpecial_features()).getBody();
+
+        ArgumentCaptor<Film> filmArgumentCaptor = ArgumentCaptor.forClass(Film.class);
+        verify(filmRepository).save(filmArgumentCaptor.capture());
+        Film Expected = filmArgumentCaptor.getValue();
+
+        Assertions.assertEquals(Expected,Actual,"Film was not updated.");
+    }
+
+
+    @Test
+    void testDeleteFilm(){
+        Film testFilm = new Film("testtitle", "testdescription", Year.of(2020), Duration.ofDays(1), 2,Duration.ofHours(0) , 2, 2, "Special_features");
+        testFilm.setFilm_id(1);
+        Film testFilmDelete = new Film("testDeletetitle", "testDeletedescription", Year.of(2020), Duration.ofDays(1), 2,Duration.ofHours(0) , 2, 2, "Special_Delete_features");
+        testFilmDelete.setFilm_id(1);
+        when(filmRepository.findById(testFilmDelete.getFilm_id())).thenReturn(Optional.of(testFilmDelete));
+        doNothing().when(filmRepository).deleteById(1);
+        Film Actual = myFirstMicroServiceApplication.deleteFilm(testFilmDelete.getFilm_id()).getBody();
+        filmRepository.deleteById(testFilmDelete.getFilm_id());
+        Film Expected = testFilmDelete;
+        Assertions.assertEquals(Expected,Actual,"Film was not deleted.");
+    }
 
 
 }
