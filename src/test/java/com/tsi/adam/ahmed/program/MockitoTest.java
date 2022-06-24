@@ -90,7 +90,7 @@ public class MockitoTest {
         testActorDelete.setActor_id(1);
         when(actorRepository.findById(testActorDelete.getActor_id())).thenReturn(Optional.of(testActorDelete));
         doNothing().when(actorRepository).deleteById(1);
-        Actor Actual = myFirstMicroServiceApplication.deleteActor(testActorDelete).getBody();
+        Actor Actual = myFirstMicroServiceApplication.deleteActor(testActorDelete.getActor_id()).getBody();
         actorRepository.deleteById(testActorDelete.getActor_id());
         Actor Expected = testActorDelete;
         Assertions.assertEquals(Expected,Actual,"Actor was not deleted.");

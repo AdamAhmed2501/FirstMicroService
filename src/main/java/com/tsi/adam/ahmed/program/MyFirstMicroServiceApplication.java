@@ -75,7 +75,7 @@ public class MyFirstMicroServiceApplication {
 	@PutMapping("/Actor/Edit/{id}")                                                                                     // Command used to edit an actor.
 	public @ResponseBody ResponseEntity<Actor> updateActor(@PathVariable int id, @RequestBody Actor actor){             // An ID, a first name and a last name are required.
 		Actor updatedActor = actorRepository.findById(id).orElseThrow(()                                                // Finds the current actor and assigns details to a variable,
-				-> new ResourceNotFoundException("Actor does not exist with the given ID. "));                          //              				  or throws out an error msg.
+				-> new ResourceNotFoundException("Actor does not exist with the given ID."));                           //            		  or throws out an error msg.
 		updatedActor.setFirst_name(actor.getFirst_name());                                                              // Changes the first name of the variable to input.
 		updatedActor.setLast_name(actor.getLast_name());                                                                // Changes the last name of the variable to input.
 		actorRepository.save(updatedActor);                                                                             // Outputs the updated information to confirm completion.
@@ -83,8 +83,8 @@ public class MyFirstMicroServiceApplication {
 	}
 
 	@DeleteMapping("/Actor/Delete/{id}")                                                                                // Command used to delete a single actor by given ID.
-	public ResponseEntity<Actor> deleteActor(@RequestBody Actor actor){                                                 // ID required as an input for this get request.
-		Actor deleteActor = actorRepository.findById(actor.getActor_id()).orElseThrow(()                                // Actor assign or error depending on if the ID exists.
+	public ResponseEntity<Actor> deleteActor(@PathVariable int id){                                                 	// ID required as an input for this get request.
+		Actor deleteActor = actorRepository.findById(id).orElseThrow(()                                					// Actor assign or error depending on if the ID exists.
 				-> new ResourceNotFoundException("Actor does not exist with given ID"));
 		actorRepository.deleteById(deleteActor.getActor_id());                                                          // Delete actor profile.
 		return ResponseEntity.ok(deleteActor);                                                                          // Output old profile as a conf.
