@@ -109,10 +109,10 @@ public class MyFirstMicroServiceApplication {
 
 	@PostMapping("/Address/New")
 	public @ResponseBody
-	String addAddress(@RequestParam String address, String address2, String district, String postal_code, double phone, String location){
+	ResponseEntity<Address>  addAddress(@RequestParam String address, String address2, String district, String postal_code, double phone, String location){
 		Address addAddress = new Address(address, address2, district, postal_code, phone, location);
 		addressRepository.save(addAddress);
-		return saved;
+		return ResponseEntity.ok(addAddress);
 	}
 
 	@PutMapping("/Address/Edit/{id}")
@@ -147,6 +147,33 @@ public class MyFirstMicroServiceApplication {
 		return categoryRepository.findAll();
 	}
 
+	@GetMapping("/Category/{id}")
+	public Category getCategory(@PathVariable int id) {
+		return categoryRepository.findById(id).orElseThrow(RuntimeException::new);
+	}
+
+	@PostMapping("/Category/New")
+	public @ResponseBody
+	ResponseEntity<Category>   addCategory(@RequestParam int id, String category){
+		Category addCategory = new Category(category);
+		categoryRepository.save(addCategory);
+		return ResponseEntity.ok(addCategory);
+	}
+
+	@PutMapping("/Category/Edit/{id}")
+	public ResponseEntity<Category> updateCategory(@RequestParam Integer id, @RequestParam String category){
+		Category updateCategory = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category does not exist with id: " + id));
+		updateCategory.set_name(category);
+		categoryRepository.save(updateCategory);
+		return ResponseEntity.ok(updateCategory);
+	}
+
+	@DeleteMapping("/Category/Delete/{id}")
+	public ResponseEntity<Category> deleteCategory(@RequestParam Integer id){
+		Category deleteCategory = categoryRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Category does not exist with id: " + id));
+		categoryRepository.deleteById(id);
+		return ResponseEntity.ok(deleteCategory);
+	}
 
 
 

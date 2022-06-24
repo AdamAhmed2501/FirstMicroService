@@ -120,6 +120,18 @@ public class MockitoTest {
     }
 
     @Test
+    public void testAddAddress() {
+
+        Address savedAddress = new Address("address", "address2", "district", "postal_code", 736, "location");
+        Address Expected = myFirstMicroServiceApplication.addAddress(savedAddress.getAddress(), savedAddress.getAddress2(), savedAddress.getDistrict(), savedAddress.getPostal_code(), savedAddress.getPhone(), savedAddress.getLocation()).getBody();
+        ArgumentCaptor<Address> addressArgumentCaptor = ArgumentCaptor.forClass(Address.class);
+        verify(addressRepository).save(addressArgumentCaptor.capture());
+        Address Actual = addressArgumentCaptor.getValue();
+        Assertions.assertEquals(Expected, Actual, "Address is not saved into the database");
+
+    }
+
+    @Test
     void testUpdateAddress(){
         Address testAddress = new Address("firstline", "secondline", "area", "postal", 20009, "London");
         testAddress.setAddress_id(1);
@@ -159,6 +171,57 @@ public class MockitoTest {
         verify(categoryRepository).findAll();
 
     }
+
+    @Test
+    void testGetCategory(){
+        Category testCategory = new Category("testcategory");
+        testCategory.setCategory_id(1);
+        when(categoryRepository.findById(1)).thenReturn(Optional.of(testCategory));
+        Category Actual = myFirstMicroServiceApplication.getCategory(testCategory.getCategory_id());
+        Category Expected = testCategory;
+        Assertions.assertEquals(Expected,Actual,"Could not find category with ID: ");
+    }
+//    @Test
+//    public void testAddCategory(){
+//
+//        Category savedCategory = new Category("testcategory");
+//        Category Expected = myFirstMicroServiceApplication.addCategory(savedCategory.get_name()).getBody();
+//        ArgumentCaptor<Category> categoryArgumentCaptor = ArgumentCaptor.forClass(Category.class);
+//        verify(categoryRepository).save(categoryArgumentCaptor.capture());
+//        Category Actual = categoryArgumentCaptor.getValue();
+//        Assertions.assertEquals(Expected,Actual,"Category is not saved into the database");
+//    }
+
+    @Test
+    void testUpdateCategory(){
+        Category testCategory = new Category("testcategory");
+        testCategory.setCategory_id(1);
+        Category testUpdateCategory = new Category("testcategoryUpdated");
+        testUpdateCategory.setCategory_id(1);
+        when(categoryRepository.findById(testCategory.getCategory_id())).thenReturn(Optional.of(testUpdateCategory));
+
+        Category Actual = myFirstMicroServiceApplication.updateCategory(testUpdateCategory.getCategory_id(), testUpdateCategory.get_name()).getBody();
+
+        ArgumentCaptor<Category> categoryArgumentCaptor = ArgumentCaptor.forClass(Category.class);
+        verify(categoryRepository).save(categoryArgumentCaptor.capture());
+        Category Expected = categoryArgumentCaptor.getValue();
+
+        Assertions.assertEquals(Expected,Actual,"Category was not updated.");
+    }
+    @Test
+    void testDeleteCategory(){
+        Category testCategory = new Category("testcategory");
+        testCategory.setCategory_id(1);
+        Category testCategoryDelete = new Category("testcategorydeleted");
+        testCategoryDelete.setCategory_id(1);
+        when(categoryRepository.findById(testCategoryDelete.getCategory_id())).thenReturn(Optional.of(testCategoryDelete));
+        doNothing().when(categoryRepository).deleteById(1);
+        Category Actual = myFirstMicroServiceApplication.deleteCategory(testCategoryDelete.getCategory_id()).getBody();
+        categoryRepository.deleteById(testCategoryDelete.getCategory_id());
+        Category Expected = testCategoryDelete;
+        Assertions.assertEquals(Expected,Actual,"Category was not deleted.");
+    }
+
 
 
 

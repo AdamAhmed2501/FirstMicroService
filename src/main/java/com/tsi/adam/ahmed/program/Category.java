@@ -13,9 +13,9 @@ public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int category_id;
 
     //Attributes
+    private int category_id;
     private String name;
 
     public Category(String name) {
